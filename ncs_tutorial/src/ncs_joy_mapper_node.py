@@ -51,14 +51,7 @@ class JoyMapper(object):
         self.param_timer = rospy.Timer(rospy.Duration.from_sec(1.0),self.cbParamTimer)
         self.has_complained = False
 
-        self.state_parallel_autonomy = False
-        self.state_verbose = False
-
-        pub_msg = BoolStamped()
-        pub_msg.data = self.state_parallel_autonomy
-        pub_msg.header.stamp = self.last_pub_time
-        self.pub_parallel_autonomy.publish(pub_msg)
-
+        
     def initial(self):
         self.model = rospy.get_param("~model_name")
         self.ncs_pkg = rospy.get_param("~ncs_pkg")

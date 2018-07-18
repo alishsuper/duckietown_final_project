@@ -17,7 +17,7 @@
 
     <!-- joy_mapper -->
     <remap from="joy_mapper_node/image/compressed" to="camera_node/image/compressed"/>
-    <include file="$(find ncs_following)/launch/ncs_joy_mapper_node.launch">
+    <include file="$(find ncs_tutorial)/launch/ncs_joy_mapper_node.launch">
         <arg name="veh" value="$(arg veh)"/>
         <arg name="local" value="$(arg local)"/>
         <arg name="config" value="$(arg config)"/>

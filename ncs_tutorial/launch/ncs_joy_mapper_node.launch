@@ -16,10 +16,10 @@
 
 	<!-- Run on remote (vehicle) -->
 	<include unless="$(arg local)" file="$(find duckietown)/machines"/>
-	<node unless="$(arg local)" ns="$(arg veh)" machine="$(arg veh)" pkg="ncs_following" type="ncs_joy_mapper_node.py" name="$(arg node_name)" output="screen" clear_params="true" required="true">
+	<node unless="$(arg local)" ns="$(arg veh)" machine="$(arg veh)" pkg="ncs_tutorial" type="ncs_joy_mapper_node.py" name="$(arg node_name)" output="screen" clear_params="true" required="true">
 		<rosparam command="load" file="$(find duckietown)/config/$(arg config)/$(arg pkg_name)/$(arg node_name)/$(arg param_file_name).yaml"/>
         	<param name="model_name" type="str" value="$(arg model)"/>
-                <param name="ncs_pkg" type="str" value="$(find ncs_following)"/>
+                <param name="ncs_pkg" type="str" value="$(find ncs_tutorial)"/>
 	</node>	
 
 	<!-- Subscribe Topics -->

@@ -38,16 +38,19 @@ class JoyMapper(object):
         self.omega_gain = self.setupParam("~steer_gain", 8.3)
 
         # Publications
-        self.pub_car_cmd = rospy.Publisher("~car_cmd", Twist2DStamped, queue_size=1)
+        #-----------------------what kind of msg should it publish?-----------------------#
+        self.pub_car_cmd = rospy.Publisher("~car_cmd", ???, queue_size=1)
+        #---------------------------------------------------------------------------------#
         self.pub_joy_override = rospy.Publisher("~joystick_override", BoolStamped, queue_size=1)
         self.pub_e_stop = rospy.Publisher("wheels_driver_node/emergency_stop",BoolStamped,queue_size=1)
 
         # Subscriptions
-        self.image_sub = rospy.Subscriber("~image/compressed", CompressedImage, self.img_cb, queue_size=1)
+        #-------------------------------which callback function should be called?----------------------#
+        self.image_sub = rospy.Subscriber("~image/compressed", CompressedImage, self.???, queue_size=1)
+        #----------------------------------------------------------------------------------------------#
         self.sub_joy_ = rospy.Subscriber("joy", Joy, self.cbJoy, queue_size=1)
 
         # timer
-        # self.pub_timer = rospy.Timer(rospy.Duration.from_sec(self.pub_timestep),self.publishControl)
         self.param_timer = rospy.Timer(rospy.Duration.from_sec(1.0),self.cbParamTimer)
         self.has_complained = False
 
@@ -63,7 +66,9 @@ class JoyMapper(object):
 
     def deviceCheck(self):
         #check device is plugged in
-        self.devices = mvnc.EnumerateDevices()
+        #----enumerate devices----#
+        self.devices = ???
+        #-------------------------#
         if len(self.devices) == 0:
             self.device_work = False
             rospy.loginfo('NCS device not found')
@@ -111,7 +116,9 @@ class JoyMapper(object):
                     car_cmd_msg = Twist2DStamped()
                     car_cmd_msg.v = 1 * self.v_gain
                     car_cmd_msg.omega = self.omega
-                    self.pub_car_cmd.publish(car_cmd_msg)
+                    #use a publisher to publish the msg
+                    ???.publish(car_cmd.msg)
+                    #----------------------------------
                 
             except CvBridgeError as e:
                 print(e)

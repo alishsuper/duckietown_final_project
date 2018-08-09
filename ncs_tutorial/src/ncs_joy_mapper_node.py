@@ -109,7 +109,7 @@ class JoyMapper(object):
                 self.graph.LoadTensor(img.astype(np.float16), 'user object')
                 output, userobj = self.graph.GetResult()
                 top1 = output.argmax()
-                self.omega = (top1 *(2/14.) - 1) * 6
+                self.omega = (top1 *(2/14.) - 1) * 5
                 print self.omega
                 
                 if self.ncs_control == 1:

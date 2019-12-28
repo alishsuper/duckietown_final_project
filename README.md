@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Main software repository for Duckietown
 
 This is the main software repository for [the Duckietown project][main]. It contains all software, as well as hardware projects.
@@ -38,6 +37,3 @@ Master is now a protected branch. [See docs here](https://github.com/blog/2051-p
     </tr>
 </tbody>
 </table>
-=======
-# ncs_tutorial
->>>>>>> 0b4c564d89156c5d454f79e929e4adcce5c9e870

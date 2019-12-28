@@ -39,14 +39,14 @@ class JoyMapper(object):
 
         # Publications
         #-----------------------what kind of msg should it publish?-----------------------#
-        self.pub_car_cmd = rospy.Publisher("~car_cmd", ???, queue_size=1)
+        self.pub_car_cmd = rospy.Publisher("~car_cmd", Twist2DStamped, queue_size=1)
         #---------------------------------------------------------------------------------#
         self.pub_joy_override = rospy.Publisher("~joystick_override", BoolStamped, queue_size=1)
         self.pub_e_stop = rospy.Publisher("wheels_driver_node/emergency_stop",BoolStamped,queue_size=1)
 
         # Subscriptions
         #-------------------------------which callback function should be called?----------------------#
-        self.image_sub = rospy.Subscriber("~image/compressed", CompressedImage, self.???, queue_size=1)
+        self.image_sub = rospy.Subscriber("~image/compressed", CompressedImage, self.img_cb, queue_size=1)
         #----------------------------------------------------------------------------------------------#
         self.sub_joy_ = rospy.Subscriber("joy", Joy, self.cbJoy, queue_size=1)
 
@@ -67,7 +67,7 @@ class JoyMapper(object):
     def deviceCheck(self):
         #check device is plugged in
         #----enumerate devices----#
-        self.devices = ???
+        self.devices = mvnc.EnumerateDevices()
         #-------------------------#
         if len(self.devices) == 0:
             self.device_work = False
@@ -117,7 +117,7 @@ class JoyMapper(object):
                     car_cmd_msg.v = 1 * self.v_gain
                     car_cmd_msg.omega = self.omega
                     #use a publisher to publish the msg
-                    ???.publish(car_cmd.msg)
+                    self.pub_car_cmd.publish(car_cmd_msg)
                     #----------------------------------
                 
             except CvBridgeError as e:

@@ -1,9 +1,70 @@
-# easy_install -U pip
+## Build in
+from argparse import ArgumentParser
+
+## Install
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
-import cv2
+from tf.keras.models import Sequential
+from tf.keras.layers import Dense, Dropout, Activation, Flatten, BatchNormalization
+from tf.keras.layers import Conv2D, MaxPooling2D
+from tf.keras import regularizers
+from tf.keras.utils import Sequence
+
+
+def init_argparser(parents=[]):
+    '''
+    Initialize an ArgumentParser for this script.
+    Args:
+        parents: A list of ArgumentParsers of other scripts, if any.
+    Returns:
+        parser: The ArgumentParsers.
+    '''
+    parser = ArgumentParser(
+        description='Trains a ai-driving model based on 15-class steering angles.',
+        parents=parents
+        )
+
+    parser.add_argument(
+        '--train', '-t',
+        help='The one or more index-file of training samples.',
+        nargs='+'
+        )
+    
+    parser.add_argument(
+        '--val', '-v',
+        help='The one or more index-file of validation samples.',
+        nargs='+'
+        )
+
+    parser.add_argument(
+        '--outdir', '-o',
+        help='The output folder where the model and checkpoints get stored at.',
+        default='./models'
+        )
+    
+    parser.add_argument(
+        '--name', '-N',
+        help='Name of the model.',
+        default='aidrive15'
+        )
+
+    parser.add_argument(
+        '--epochs', '-e',
+        help='Name of the model.',
+        type=int
+        default=1
+        )
+
+    return parser
+
+
+def main(args):
+    
+
+    return 0
+
 # 1. data preprocessing - get training data
 x_train = []
 x_test = []
@@ -37,13 +98,7 @@ y_train = readLabel("ele/train.txt")
 y_test = readLabel("ele/test.txt")
 
 
-# 1.3 change target format
-import keras
-from keras.datasets import cifar10
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation, Flatten, BatchNormalization
-from keras.layers import Conv2D, MaxPooling2D
-from keras import regularizers
+
 # set parameters
 num_classes = 15
 # read data
@@ -213,27 +268,7 @@ show_learning_curve(train_history, epochs)
 
 
 
-'''
-#
-# x = tf.placeholder(tf.float32, shape=(None, shape101, shape101, 3), name="input")
-# y = model(x)
-
-model3 = keras.models.load_model("demo1.h5")
-opt = keras.optimizers.Adam(lr=0.0001)
-model.compile(loss='categorical_crossentropy',
-              optimizer=opt,
-              metrics=['accuracy'])
-epochs = 1
-model3.fit(x_train, y_train,
-                          batch_size=batch_size,
-                          epochs=epochs,
-                          validation_split=0.1,
-                          shuffle=True)
-scores = model3.evaluate(x_test, y_test, verbose=1)
-print('Test loss:', scores[0])
-print('Test accuracy:', scores[1])
-
-'''
-
-
-
+if __name__ is '__main__':
+    parser = init_argparser()
+    args, _ = parser.parse_known_args()
+    exit(main(args))

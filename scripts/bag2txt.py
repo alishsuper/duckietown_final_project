@@ -74,6 +74,9 @@ def unpack_bag(bag_files, out_dir, test_split=0, delimiter=' ', verbose=True):
             os.makedirs(curr_dir)
         train = open(os.path.join(curr_dir, 'train.csv'), 'w')
         test = open(os.path.join(curr_dir, 'test.csv'), 'w')
+        headers = delimiter.join(('topic', 'num', 'omega', 'gain', 'timestamp', 'image') + '\r\n'
+        test.write(headers)
+        train.write(headers)
         
         with rosbag.Bag(bag_file, 'r') as bag:
             verbose_print("Unpack:", bag_file , "to:", curr_dir)
@@ -95,7 +98,7 @@ def unpack_bag(bag_files, out_dir, test_split=0, delimiter=' ', verbose=True):
                     except:
                         verbose_print("Writing image to: {} failed!".format(img_path))
                     
-                    entry = delimiter.join((topic, str(num), str(omega), str(v), str(t), img_path , '\n'))
+                    entry = delimiter.join((topic, str(num), str(omega), str(v), str(t), img_path)) + '\r\n'
                     if test_split and num % test_split is 0:
 			            test.write(entry)
 			            verbose_print("Wrote: '{}' to test".format(entry))

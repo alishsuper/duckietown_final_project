@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 ## Build in
 from argparse import ArgumentParser
 
@@ -240,7 +242,35 @@ sess = keras.backend.get_session()
 save_path = saver.save(sess, "demo1.ckpt")
 
 
-
+class MultiIndexDatagenerator():
+    def __init__(self, index_files, x_header, t_header, shape=None, fit=True):
+        self.index_files = index_files
+        self.x_header = x_header
+        self.t_header = t_header
+        self.shape = shape
+        self.fit = fit
+        
+        self.load_index_files(index_files)
+        pass
+    
+    def load_index_files(index_files):
+        self.df = pd.concat(map(pd.read_csv, index_files))
+    
+    def __len__(self):
+        return df.shape[0]
+    
+    def __getitem__(self, index):
+        img_path = self.df.at(index, self.x_header)
+        x = np.array(cv2.imread(img_path))
+        t = np.array(self.df.at(index, self.t_header))
+        
+        if self.shape:
+            x = cv2.resize(x, self.shape, interpolation=cv2.INTER_CUBIC)
+        
+        if self.fit:
+            return x, t
+        else:
+            return x
 
 
 # 4. show pictures

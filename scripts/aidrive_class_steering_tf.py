@@ -184,60 +184,59 @@ class Classifier():
         else:
             self.input = tf.placeholder(tf.float32, shape=shape, name='input')
     
-        with tf.name_scope('classifier'):
-            self.conv1_filter = tf.Variable(tf.truncated_normal(shape=[3, 3, 3, 64], mean=0, stddev=0.08, dtype=tf.float32))
-            self.conv2_filter = tf.Variable(tf.truncated_normal(shape=[3, 3, 64, 128], mean=0, stddev=0.08, dtype=tf.float32))
-            self.conv3_filter = tf.Variable(tf.truncated_normal(shape=[5, 5, 128, 256], mean=0, stddev=0.08, dtype=tf.float32))
-            self.conv4_filter = tf.Variable(tf.truncated_normal(shape=[5, 5, 256, 512], mean=0, stddev=0.08, dtype=tf.float32))
+        self.conv1_filter = tf.Variable(tf.truncated_normal(shape=[3, 3, 3, 64], mean=0, stddev=0.08, dtype=tf.float32))
+        self.conv2_filter = tf.Variable(tf.truncated_normal(shape=[3, 3, 64, 128], mean=0, stddev=0.08, dtype=tf.float32))
+        self.conv3_filter = tf.Variable(tf.truncated_normal(shape=[5, 5, 128, 256], mean=0, stddev=0.08, dtype=tf.float32))
+        self.conv4_filter = tf.Variable(tf.truncated_normal(shape=[5, 5, 256, 512], mean=0, stddev=0.08, dtype=tf.float32))
 
-            # 1, 2
-            self.conv1 = tf.nn.conv2d(self.input, self.conv1_filter, strides=[1, 1, 1, 1], padding='SAME')
-            self.conv1_relu = tf.nn.relu(self.conv1)
-            self.conv1_pool = tf.nn.max_pool(self.conv1_relu, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
-            self.conv1_bn = tf.layers.batch_normalization(self.conv1_pool, fused=False)
+        # 1, 2
+        self.conv1 = tf.nn.conv2d(self.input, self.conv1_filter, strides=[1, 1, 1, 1], padding='SAME')
+        self.conv1_relu = tf.nn.relu(self.conv1)
+        self.conv1_pool = tf.nn.max_pool(self.conv1_relu, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+        self.conv1_bn = tf.layers.batch_normalization(self.conv1_pool, fused=False)
 
-            # 3, 4
-            self.conv2 = tf.nn.conv2d(self.conv1_bn, self.conv2_filter, strides=[1, 1, 1, 1], padding='SAME')
-            self.conv2_relu = tf.nn.relu(self.conv2)
-            self.conv2_pool = tf.nn.max_pool(self.conv2_relu, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
-            self.conv2_bn = tf.layers.batch_normalization(self.conv2_pool, fused=False)
+        # 3, 4
+        self.conv2 = tf.nn.conv2d(self.conv1_bn, self.conv2_filter, strides=[1, 1, 1, 1], padding='SAME')
+        self.conv2_relu = tf.nn.relu(self.conv2)
+        self.conv2_pool = tf.nn.max_pool(self.conv2_relu, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+        self.conv2_bn = tf.layers.batch_normalization(self.conv2_pool, fused=False)
 
-            # 5, 6
-            self.conv3 = tf.nn.conv2d(self.conv2_bn, self.conv3_filter, strides=[1, 1, 1, 1], padding='SAME')
-            self.conv3_relu = tf.nn.relu(self.conv3)
-            self.conv3_pool = tf.nn.max_pool(self.conv3_relu, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
-            self.conv3_bn = tf.layers.batch_normalization(self.conv3_pool, fused=False)
+        # 5, 6
+        self.conv3 = tf.nn.conv2d(self.conv2_bn, self.conv3_filter, strides=[1, 1, 1, 1], padding='SAME')
+        self.conv3_relu = tf.nn.relu(self.conv3)
+        self.conv3_pool = tf.nn.max_pool(self.conv3_relu, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+        self.conv3_bn = tf.layers.batch_normalization(self.conv3_pool, fused=False)
 
-            # 7, 8
-            self.conv4 = tf.nn.conv2d(self.conv3_bn, self.conv4_filter, strides=[1, 1, 1, 1], padding='SAME')
-            self.conv4_relu = tf.nn.relu(self.conv4)
-            self.conv4_pool = tf.nn.max_pool(self.conv4_relu, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
-            self.conv4_bn = tf.layers.batch_normalization(self.conv4_pool, fused=False)
+        # 7, 8
+        self.conv4 = tf.nn.conv2d(self.conv3_bn, self.conv4_filter, strides=[1, 1, 1, 1], padding='SAME')
+        self.conv4_relu = tf.nn.relu(self.conv4)
+        self.conv4_pool = tf.nn.max_pool(self.conv4_relu, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+        self.conv4_bn = tf.layers.batch_normalization(self.conv4_pool, fused=False)
 
-            # 9
-            self.flat = tf.contrib.layers.flatten(self.conv4_bn)
+        # 9
+        self.flat = tf.contrib.layers.flatten(self.conv4_bn)
 
-            # 10
-            self.full1 = tf.contrib.layers.fully_connected(inputs=self.flat, num_outputs=1024, activation_fn=tf.nn.relu)
-            if dropout:
-                self.full1 = tf.nn.dropout(self.full1, dropout)
-            self.full1_bn = tf.layers.batch_normalization(self.full1, fused=False)
+        # 10
+        self.full1 = tf.contrib.layers.fully_connected(inputs=self.flat, num_outputs=1024, activation_fn=tf.nn.relu)
+        if dropout:
+            self.full1 = tf.nn.dropout(self.full1, dropout)
+        self.full1_bn = tf.layers.batch_normalization(self.full1, fused=False)
 
-            '''
-            # 11
-            self.full2 = tf.contrib.layers.fully_connected(inputs=self.full1_bn, num_outputs=256, activation_fn=tf.nn.relu)
-            self.full2_drop = tf.nn.dropout(self.full2, dropout)
-            self.full2_bn = tf.layers.batch_normalization(self.full2_drop, fused=False)
+        '''
+        # 11
+        self.full2 = tf.contrib.layers.fully_connected(inputs=self.full1_bn, num_outputs=256, activation_fn=tf.nn.relu)
+        self.full2_drop = tf.nn.dropout(self.full2, dropout)
+        self.full2_bn = tf.layers.batch_normalization(self.full2_drop, fused=False)
 
-            # 12
-            self.full3 = tf.contrib.layers.fully_connected(inputs=self.full2, num_outputs=512, activation_fn=tf.nn.relu)
-            self.full3_drop = tf.nn.dropout(self.full3, dropout)
-            self.full3_bn = tf.layers.batch_normalization(self.full3_drop, fused=False)
+        # 12
+        self.full3 = tf.contrib.layers.fully_connected(inputs=self.full2, num_outputs=512, activation_fn=tf.nn.relu)
+        self.full3_drop = tf.nn.dropout(self.full3, dropout)
+        self.full3_bn = tf.layers.batch_normalization(self.full3_drop, fused=False)
 
-            # 13
-            self.full4 = tf.contrib.layers.fully_connected(inputs=self.full3, num_outputs=1024, activation_fn=tf.nn.relu)
-            self.full4_drop = tf.nn.dropout(self.full4, dropout)
-            self.full4_bn = tf.layers.batch_normalization(self.full4_drop, fused=False)
+        # 13
+        self.full4 = tf.contrib.layers.fully_connected(inputs=self.full3, num_outputs=1024, activation_fn=tf.nn.relu)
+        self.full4_drop = tf.nn.dropout(self.full4, dropout)
+        self.full4_bn = tf.layers.batch_normalization(self.full4_drop, fused=False)
             '''
 
         # 14
@@ -266,20 +265,18 @@ class Classifier():
         pass
         
 def test(sess, model, test_sample):
-    cost_log = []
     acc_log = []
     
     try:
         while True:
             x, t, index, step, epoch = sess.run(test_sample)
-            cost, acc = sess.run((model.cost, model.accuracy),
+            acc = sess.run(model.accuracy,
                 feed_dict={
                     model.input: x,
                     model.target: t
                 })
-            cost_log.append(cost.mean())
             acc_log.append(acc)
-            print("(Validation) Epoch: {}, Step: {}, Cost {}, Batch Acc: {}".format(epoch.max(), step.max(), loss.mean(), acc))
+            print("(Validation) Epoch: {}, Step: {}, Batch Acc: {}".format(epoch.max(), step.max(), acc))
   
     except tf.errors.OutOfRangeError: #data generator expiered
         print("Done!!!")
@@ -288,12 +285,11 @@ def test(sess, model, test_sample):
         print("Validation aborted!!!")
         pass
     
-    final_cost = np.array(cost_log).mean()
     final_acc = np.array(acc_log).mean()
-    return final_cost, final_acc
+    return final_acc
 
 
-def train(model, train_set, test_set=None, outd=None, name='model', chpt=0):
+def train(model, train_set, test_set=None,outd=None, name='model', chpt=0):
     train_iter = train_set.make_one_shot_iterator()
     train_sample = train_iter.get_next()
     
@@ -303,6 +299,7 @@ def train(model, train_set, test_set=None, outd=None, name='model', chpt=0):
 
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
+        sess.run(tf.local_variables_initializer())
         saver = tf.train.Saver()
         best_epoch = 0
         curr_epoch = 1
@@ -315,13 +312,15 @@ def train(model, train_set, test_set=None, outd=None, name='model', chpt=0):
                         model.input: x,
                         model.target: t
                     })
-                print("(Training) Epoch: {}, Step: {}, Loss {}, Batch Acc: {}".format(epoch.max(), step.max(), loss.mean(), acc))
+                epoch = epoch.max()
+                print("(Training) Epoch: {}, Step: {}, Loss {}, Batch Acc: {}".format(epoch, step.max(), loss.mean(), acc))
                 
                 if test_set:
-                    if curr_epoch != epoch.max():
+                    if curr_epoch != epoch:
+                        curr_epoch = epoch
                         sess.run(test_iter.initializer)
-                        fin_cost, fin_acc = test(sess, model, test_sample)
-                        print("(Validation Result) Final Cost: {}, Final Acc: {}".format(fin_cost, fin_acc))
+                        fin_acc = test(sess, model, test_sample)
+                        print("(Validation Result) Final Acc: {}".format(fin_acc))
                         if outd and (best_epoch == 0 or best_epoch > fin_acc):
                             save_path = saver.save(sess, os.path.join(outd, '{}_best'.format(name)))
                             print("Saved best session to:", save_path)
@@ -342,6 +341,19 @@ def train(model, train_set, test_set=None, outd=None, name='model', chpt=0):
         if outd:
             save_path = saver.save(sess, os.path.join(outd, name))
             print("Saved session to:", save_path)
+
+
+def export(outdir, shape=(1, 101, 101, 3), classes=15, name='model'):
+    tf.reset_default_graph()
+    model = Classifier(None, classes, shape, 0)
+
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
+        sess.run(tf.local_variables_initializer())
+        saver = tf.train.Saver(tf.global_variables())
+        saver.restore(sess, os.path.join(outdir, name))
+        save_path = saver.save(sess, os.path.join(outdir, "{}_freezed".format(name)))
+    return save_path
 
 
 def main(args):
@@ -375,13 +387,21 @@ def main(args):
             )
         test_samples = len(test_index)
         test_set = tf.data.Dataset.from_generator(test_index, output_types=(tf.float32, tf.float32, tf.int32, tf.int32, tf.int32))
+        test_set = test_set.batch(1)
     else:
         test_set = None
 
-    if args.model: #load model
-        print("Load model...")
-        pass
-    else: # init model
+    if args.model:
+        print("Load model:", args.model)
+        shape = (None, args.shape[1], args.shape[2], args.shape[3])
+        model = Classifier(None, args.classes, shape, args.dropout)
+        
+        with tf.Session() as sess:
+            sess.run(tf.global_variables_initializer())
+            sess.run(tf.local_variables_initializer())
+            saver = tf.train.Saver(tf.global_variables())
+            saver.restore(sess, model)
+    else:
         print("Initialize new model...")
         shape = (None, args.shape[1], args.shape[2], args.shape[3])
         model = Classifier(None, args.classes, shape, args.dropout)
@@ -402,6 +422,10 @@ def main(args):
             args.name,
             len(train_index) if args.checkpoints == 'epoch' else int(args.checkpoints)
             )
+            
+        if args.export and args.outdir:
+            save_path = export(args.outdir, args.shape, args.classes, args.name)
+            print("Saved freezed graph to:", save_path)
         
     elif test_set: #run test only
         print("Start testing...")
@@ -409,25 +433,20 @@ def main(args):
         test_sample = test_iter.get_next()
         
         with tf.Session() as sess:
-            sess.run(test_iter.initializer)
-            test(
-                sess,
-                model,
-                test_sample
-                )
-    
-    if args.export and args.outdir:
-        tf.reset_default_graph()
-        shape = (1, args.shape[1], args.shape[2], args.shape[3])
-        model = Classifier(None, args.classes, shape, 0)
-    
-        with tf.Session() as sess:
             sess.run(tf.global_variables_initializer())
             sess.run(tf.local_variables_initializer())
-            saver = tf.train.Saver(tf.global_variables())
-            saver.restore(sess, os.path.join(args.outdir, args.name))
-            save_path = saver.save(sess, os.path.join(args.outdir, "{}_freezed".format(args.name)))
+            sess.run(test_iter.initializer)
+            fin_acc = test(
+                            sess,
+                            model,
+                            test_sample
+                            )
+            print("(Validation Result) Final Acc: {}".format(fin_acc))
+    
+    elif args.export and args.outdir: #run export only
+        save_path = export(args.outdir, args.shape, args.classes, args.name)
         print("Saved freezed graph to:", save_path)
+        
     return 0
 
 if __name__ == '__main__':

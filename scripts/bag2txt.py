@@ -45,7 +45,7 @@ def init_argparser(parents=[]):
         )
     
     parser.add_argument(
-        '--delimiter',
+        '--delimiter', '-D',
         help="Delimiter that separates the values in the TXT-files.",
         default=' '
         )
@@ -74,7 +74,7 @@ def unpack_bag(bag_files, out_dir, test_split=0, delimiter=' ', verbose=True):
             os.makedirs(curr_dir)
         train = open(os.path.join(curr_dir, 'train.csv'), 'w')
         test = open(os.path.join(curr_dir, 'test.csv'), 'w')
-        headers = delimiter.join(('topic', 'num', 'omega', 'gain', 'timestamp', 'image') + '\r\n'
+        headers = delimiter.join(('topic', 'num', 'omega', 'gain', 'timestamp', 'image')) + '\r\n'
         test.write(headers)
         train.write(headers)
         

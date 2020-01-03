@@ -146,7 +146,7 @@ class MultiIndexDatagenerator():
     def load_index_files(self, index_files, x_header, t_header, classes=15, delimiter=None):
         df = pd.concat((pd.read_csv(index_file, delimiter=delimiter) for index_file in index_files))
         t = df[t_header].to_numpy()
-        t = (t / (t.max() - t.min()) * classes).astype(int) + np.floor(classes * 0.5)
+        t = (t / (t.max() - t.min()) * (classes-1)).astype(int) + np.floor((classes-1) * 0.5)
         self.t = tf.keras.utils.to_categorical(t, classes)
         self.x = df[x_header]
         pass
